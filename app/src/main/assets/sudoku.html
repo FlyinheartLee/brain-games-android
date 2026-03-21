@@ -963,8 +963,8 @@
 
     <!-- 工具栏 -->
     <div class="toolbar">
-        <button class="tool-btn tool-btn-new" onclick="showNewGameModal()">
-            <span>🎮</span> 新游戏
+        <button class="tool-btn tool-btn-new" onclick="autoFillNotes()">
+            <span>📋</span> 一键笔记
         </button>
         <button class="tool-btn tool-btn-secondary" id="notes-btn" onclick="toggleNotesMode()">
             <span>📝</span> 笔记
@@ -1186,11 +1186,11 @@
             return true;
         }
 
-        // 创建谜题
+        // 创建谜题 - 确保挖空后仍有唯一解
         function createPuzzle(solution, level) {
             const puzzle = [...solution];
             let cellsToRemove;
-            
+
             switch (level) {
                 case 'easy': cellsToRemove = 35; break;
                 case 'medium': cellsToRemove = 45; break;
@@ -1198,15 +1198,72 @@
                 case 'expert': cellsToRemove = 62; break;
                 default: cellsToRemove = 55;
             }
-            
+
+            // 生成所有位置并打乱
             const positions = Array.from({length: 81}, (_, i) => i);
             shuffleArray(positions);
-            
-            for (let i = 0; i < cellsToRemove; i++) {
-                puzzle[positions[i]] = 0;
+
+            let removed = 0;
+            for (let i = 0; i < positions.length && removed < cellsToRemove; i++) {
+                const pos = positions[i];
+                const originalValue = puzzle[pos];
+
+                // 尝试挖空
+                puzzle[pos] = 0;
+
+                // 检查是否仍有唯一解
+                const board2D = convertTo2D(puzzle);
+                if (hasUniqueSolution(board2D)) {
+                    removed++;
+                } else {
+                    // 恢复该数字（不是唯一解，不能挖）
+                    puzzle[pos] = originalValue;
+                }
             }
-            
+
             return puzzle;
+        }
+
+        // 将一维数组转换为二维数组
+        function convertTo2D(puzzle) {
+            const board = [];
+            for (let i = 0; i < 9; i++) {
+                board.push(puzzle.slice(i * 9, i * 9 + 9));
+            }
+            return board;
+        }
+
+        // 检查数独是否有唯一解 - 使用计数器模式
+        function hasUniqueSolution(board) {
+            let count = 0;
+
+            // 深拷贝棋盘
+            const copy = board.map(row => [...row]);
+
+            function countSolutions(b) {
+                if (count > 1) return; // 已经找到多个解，提前返回
+
+                for (let row = 0; row < 9; row++) {
+                    for (let col = 0; col < 9; col++) {
+                        if (b[row][col] === 0) {
+                            for (let num = 1; num <= 9; num++) {
+                                if (isValid(b, row, col, num)) {
+                                    b[row][col] = num;
+                                    countSolutions(b);
+                                    b[row][col] = 0;
+                                    if (count > 1) return; // 提前终止
+                                }
+                            }
+                            return; // 当前空格无合法数字
+                        }
+                    }
+                }
+                // 找到一个完整解
+                count++;
+            }
+
+            countSolutions(copy);
+            return count === 1;
         }
 
         // 渲染网格
@@ -1584,6 +1641,74 @@
                 hintCell = null;
                 renderGrid();
             }, 3000);
+        }
+
+        // 一键笔记功能 - 自动为所有空格填入可能的数字
+        function autoFillNotes() {
+            let filledCount = 0;
+
+            for (let idx = 0; idx < 81; idx++) {
+                // 只处理空格
+                if (grid[idx] !== 0) continue;
+
+                const row = Math.floor(idx / 9);
+                const col = idx % 9;
+
+                // 计算该空格可能填入的数字
+                const possibleNumbers = getPossibleNumbers(idx);
+
+                // 覆盖之前的笔记
+                notes[idx] = new Set(possibleNumbers);
+
+                if (possibleNumbers.length > 0) {
+                    filledCount++;
+                }
+            }
+
+            renderGrid();
+            showToast(`📋 已为 ${filledCount} 个空格填入笔记`, 'success');
+        }
+
+        // 获取某个空格可能填入的数字
+        function getPossibleNumbers(cellIdx) {
+            const row = Math.floor(cellIdx / 9);
+            const col = cellIdx % 9;
+            const boxRow = Math.floor(row / 3);
+            const boxCol = Math.floor(col / 3);
+
+            const usedNumbers = new Set();
+
+            // 检查同行
+            for (let c = 0; c < 9; c++) {
+                const idx = row * 9 + c;
+                if (grid[idx] !== 0) usedNumbers.add(grid[idx]);
+            }
+
+            // 检查同列
+            for (let r = 0; r < 9; r++) {
+                const idx = r * 9 + col;
+                if (grid[idx] !== 0) usedNumbers.add(grid[idx]);
+            }
+
+            // 检查同宫
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    const r = boxRow * 3 + i;
+                    const c = boxCol * 3 + j;
+                    const idx = r * 9 + c;
+                    if (grid[idx] !== 0) usedNumbers.add(grid[idx]);
+                }
+            }
+
+            // 返回未使用的数字
+            const possible = [];
+            for (let num = 1; num <= 9; num++) {
+                if (!usedNumbers.has(num)) {
+                    possible.push(num);
+                }
+            }
+
+            return possible;
         }
 
         // 笔记模式
