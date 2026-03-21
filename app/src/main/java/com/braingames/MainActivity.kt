@@ -16,26 +16,26 @@ class MainActivity : AppCompatActivity() {
     private var backPressedTime: Long = 0
 
     private val games = listOf(
-        Game(1, "数独", "经典数字填充游戏，挑战你的逻辑思维", R.drawable.ic_sudoku, 
-             "https://flyinheartlee.github.io/sudoku/sudoku-h5.html"),
-        Game(2, "数字迷宫", "在迷宫中寻找正确路径", R.drawable.ic_maze, 
-             "https://flyinheartlee.github.io/sudoku/number-maze.html"),
-        Game(3, "摩天楼", "根据提示建造摩天大楼", R.drawable.ic_skyscraper, 
-             "https://flyinheartlee.github.io/sudoku/skyscraper.html"),
-        Game(4, "2048", "滑动合并数字，达到2048", R.drawable.ic_2048, 
-             "https://flyinheartlee.github.io/sudoku/game2048.html"),
-        Game(5, "华容道", "经典滑块解谜游戏", R.drawable.ic_klotski, 
-             "https://flyinheartlee.github.io/sudoku/klotski.html"),
-        Game(6, "扫雷", "找出所有隐藏的地雷", R.drawable.ic_minesweeper, 
-             "https://flyinheartlee.github.io/sudoku/minesweeper.html"),
-        Game(7, "接水管", "旋转管道连接水源", R.drawable.ic_pipe, 
-             "https://flyinheartlee.github.io/sudoku/pipe.html"),
-        Game(8, "记忆翻牌", "考验你的记忆力", R.drawable.ic_memory, 
-             "https://flyinheartlee.github.io/sudoku/memory.html"),
-        Game(9, "推箱子", "经典仓库番游戏", R.drawable.ic_sokoban, 
-             "https://flyinheartlee.github.io/sudoku/sokoban.html"),
-        Game(10, "数桥", "连接岛屿的经典谜题", R.drawable.ic_hashi, 
-             "https://flyinheartlee.github.io/sudoku/hashi.html")
+        Game(1, "数独", "经典数字填充游戏，挑战你的逻辑思维", R.drawable.ic_sudoku,
+             "file:///android_asset/sudoku.html"),
+        Game(2, "数字迷宫", "在迷宫中寻找正确路径", R.drawable.ic_maze,
+             "file:///android_asset/number-maze.html"),
+        Game(3, "摩天楼", "根据提示建造摩天大楼", R.drawable.ic_skyscraper,
+             "file:///android_asset/skyscraper.html"),
+        Game(4, "2048", "滑动合并数字，达到2048", R.drawable.ic_2048,
+             "file:///android_asset/game2048.html"),
+        Game(5, "华容道", "经典滑块解谜游戏", R.drawable.ic_klotski,
+             "file:///android_asset/klotski.html"),
+        Game(6, "扫雷", "找出所有隐藏的地雷", R.drawable.ic_minesweeper,
+             "file:///android_asset/minesweeper.html"),
+        Game(7, "接水管", "旋转管道连接水源", R.drawable.ic_pipe,
+             "file:///android_asset/pipe.html"),
+        Game(8, "记忆翻牌", "考验你的记忆力", R.drawable.ic_memory,
+             "file:///android_asset/memory.html"),
+        Game(9, "推箱子", "经典仓库番游戏", R.drawable.ic_sokoban,
+             "file:///android_asset/sokoban.html"),
+        Game(10, "数桥", "连接岛屿的经典谜题", R.drawable.ic_hashi,
+             "file:///android_asset/hashi.html")
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
