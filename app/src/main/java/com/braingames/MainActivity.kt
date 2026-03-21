@@ -3,6 +3,7 @@ package com.braingames
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -52,6 +53,20 @@ class MainActivity : AppCompatActivity() {
             openGame(game)
         }
         recyclerView.adapter = gameAdapter
+
+        // 注册返回键处理
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val currentTime = System.currentTimeMillis()
+                if (currentTime - backPressedTime > 2000) {
+                    backPressedTime = currentTime
+                    Toast.makeText(this@MainActivity, "再按一次退出应用", Toast.LENGTH_SHORT).show()
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
     }
 
     private fun openGame(game: Game) {
@@ -60,15 +75,5 @@ class MainActivity : AppCompatActivity() {
             putExtra("game_url", game.url)
         }
         startActivity(intent)
-    }
-
-    override fun onBackPressed() {
-        val currentTime = System.currentTimeMillis()
-        if (currentTime - backPressedTime > 2000) {
-            backPressedTime = currentTime
-            Toast.makeText(this, "再按一次退出应用", Toast.LENGTH_SHORT).show()
-        } else {
-            super.onBackPressed()
-        }
     }
 }
