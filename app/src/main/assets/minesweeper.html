@@ -193,6 +193,23 @@
             box-shadow: 0 2px 8px rgba(100, 116, 139, 0.4);
         }
 
+        .how-to-play-btn {
+            padding: 4px 10px;
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            border: none;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(249, 115, 22, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .how-to-play-btn:active {
+            transform: scale(0.95);
+        }
+
         .stats-bar {
             position: relative;
             z-index: 10;
@@ -591,7 +608,10 @@
             <div class="logo-icon">💣</div>
             <div class="logo-text">扫雷</div>
         </div>
-        <div class="difficulty-badge" id="difficulty-badge">简单</div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <button class="how-to-play-btn" onclick="showRulesModal()">❓ 玩法</button>
+            <div class="difficulty-badge" id="difficulty-badge">简单</div>
+        </div>
     </div>
 
     <div class="stats-bar">
@@ -667,6 +687,25 @@
             <p style="color: #64748b; font-size: 0.9rem; margin: 10px 0;">你踩到了地雷...</p>
             <div class="modal-actions" style="margin-top: 20px;">
                 <button class="modal-btn modal-btn-primary" onclick="closeDefeat(); startNewGame()">再试一次</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 规则说明 -->
+    <div class="modal-overlay" id="rules-modal">
+        <div class="modal">
+            <h2>📖 游戏规则</h2>
+            <div class="rules-text" style="font-size: 0.9rem; color: #475569; line-height: 1.6; margin: 15px 0;">
+                <p><strong>目标：</strong>找出所有隐藏的地雷，不要踩到它们！</p>
+                <p><strong>玩法：</strong></p>
+                <p>• 点击格子揭开它</p>
+                <p>• 数字 = 周围8格中的地雷数量</p>
+                <p>• 长按或右键标记旗帜 🚩</p>
+                <p>• 用逻辑推理避开地雷</p>
+                <p style="margin-top: 10px;"><strong>提示：</strong>点击"标记"按钮进入标记模式</p>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-primary" onclick="closeRulesModal()">明白了</button>
             </div>
         </div>
     </div>
@@ -952,6 +991,14 @@
 
         function closeDefeat() {
             document.getElementById('defeat-modal').classList.remove('show');
+        }
+
+        function showRulesModal() {
+            document.getElementById('rules-modal').classList.add('show');
+        }
+
+        function closeRulesModal() {
+            document.getElementById('rules-modal').classList.remove('show');
         }
 
         function showToast(message, type = 'success') {

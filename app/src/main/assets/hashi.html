@@ -717,6 +717,23 @@
             border-radius: 1px;
         }
 
+        .how-to-play-btn {
+            padding: 4px 10px;
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            border: none;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(249, 115, 22, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .how-to-play-btn:active {
+            transform: scale(0.95);
+        }
+
         /* 游戏导航 */
         .game-nav {
             position: relative;
@@ -800,6 +817,7 @@
             <div class="logo-text">数桥 Master</div>
         </div>
         <div style="display: flex; gap: 8px; align-items: center;">
+            <button class="how-to-play-btn" onclick="showRules()">❓ 玩法</button>
             <span class="difficulty-badge" id="difficulty-badge">中等</span>
             <div class="menu-btn" onclick="showNewGameModal()">
                 <span></span>

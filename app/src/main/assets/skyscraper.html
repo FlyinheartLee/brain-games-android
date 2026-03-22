@@ -459,6 +459,28 @@
             color: #065f46;
         }
 
+        /* 玩法介绍按钮 */
+        .how-to-play-btn {
+            padding: 6px 12px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .how-to-play-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+        }
+
         .toast {
             position: fixed;
             top: 50%;
@@ -578,6 +600,7 @@
             <div class="logo-text">摩天楼</div>
         </div>
         <div style="display: flex; gap: 8px; align-items: center;">
+            <button class="how-to-play-btn" onclick="showRules()">❓ 玩法</button>
             <div class="level-badge" id="level-badge">4×4</div>
         </div>
     </div>

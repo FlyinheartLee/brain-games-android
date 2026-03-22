@@ -468,6 +468,59 @@
             color: white !important;
         }
 
+        /* 玩法介绍按钮 */
+        .how-to-play-btn {
+            padding: 6px 12px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .how-to-play-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+        }
+
+        /* 规则弹窗样式 */
+        .rules-content {
+            text-align: left;
+            color: #475569;
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        .rules-content h3 {
+            color: #ec4899;
+            margin: 16px 0 8px 0;
+            font-size: 1rem;
+        }
+
+        .rules-content h3:first-child {
+            margin-top: 0;
+        }
+
+        .rules-content ul {
+            padding-left: 20px;
+            margin: 8px 0;
+        }
+
+        .rules-content li {
+            margin: 6px 0;
+        }
+
+        .rules-content strong {
+            color: #ec4899;
+        }
+
         /* 游戏导航菜单 */
         .game-nav {
             position: relative;
@@ -543,6 +596,7 @@
             <div class="logo-text">数字迷宫</div>
         </div>
         <div style="display: flex; gap: 8px; align-items: center;">
+            <button class="how-to-play-btn" onclick="showRulesModal()">❓ 玩法</button>
             <div class="level-badge" id="level-badge">1-10</div>
         </div>
     </div>
@@ -578,6 +632,40 @@
         <button class="tool-btn tool-btn-primary" onclick="showLevelModal()">
             <span>🎮</span> 新游戏
         </button>
+    </div>
+
+    <!-- 玩法介绍弹窗 -->
+    <div class="modal-overlay" id="rules-modal">
+        <div class="modal">
+            <h2>🎮 数字迷宫玩法介绍</h2>
+            <div class="rules-content">
+                <h3>📋 游戏规则</h3>
+                <ul>
+                    <li>从数字 <strong>1</strong> 开始，按顺序走到目标数字</li>
+                    <li>每次只能走到<strong>相邻的格子</strong>（上下左右）</li>
+                    <li>每个格子<strong>只能走一次</strong>，不能重复</li>
+                    <li>必须按顺序经过所有数字，不能跳过</li>
+                </ul>
+                
+                <h3>🎮 操作方法</h3>
+                <ul>
+                    <li><strong>点击相邻格子</strong>移动当前位置</li>
+                    <li><strong>撤销</strong>：可撤销上一步移动</li>
+                    <li><strong>提示</strong>：显示下一步可以走的格子</li>
+                    <li>点击已走过的格子可以<strong>回退</strong>到该位置</li>
+                </ul>
+                
+                <h3>💡 游戏技巧</h3>
+                <ul>
+                    <li>提前规划好大致路线</li>
+                    <li>注意关键数字的位置，它们是固定的提示</li>
+                    <li>死胡同时及时撤销，尝试其他路径</li>
+                </ul>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-primary" onclick="closeRulesModal()">明白了</button>
+            </div>
+        </div>
     </div>
 
     <!-- 难度选择 -->
@@ -926,10 +1014,18 @@
             const toast = document.getElementById('toast');
             toast.textContent = message;
             toast.className = `toast ${type} show`;
-            
+
             setTimeout(() => {
                 toast.classList.remove('show');
             }, 1500);
+        }
+
+        function showRulesModal() {
+            document.getElementById('rules-modal').classList.add('show');
+        }
+
+        function closeRulesModal() {
+            document.getElementById('rules-modal').classList.remove('show');
         }
 
         function showVictory() {

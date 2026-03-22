@@ -191,6 +191,23 @@
             box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
         }
 
+        .how-to-play-btn {
+            padding: 6px 12px;
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            border: none;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .how-to-play-btn:active {
+            transform: scale(0.95);
+        }
+
         .stats-bar {
             position: relative;
             z-index: 10;
@@ -573,7 +590,10 @@
             <div class="logo-icon">🃏</div>
             <div class="logo-text">记忆翻牌</div>
         </div>
-        <div class="theme-badge" id="theme-badge">Emoji</div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <button class="how-to-play-btn" onclick="showRulesModal()">❓ 玩法</button>
+            <div class="theme-badge" id="theme-badge">Emoji</div>
+        </div>
     </div>
 
     <div class="stats-bar">
@@ -643,6 +663,25 @@
             </div>
             <div class="modal-actions" style="margin-top: 20px;">
                 <button class="modal-btn modal-btn-primary" onclick="closeVictory(); newGame()">再玩一次</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 规则说明 -->
+    <div class="modal-overlay" id="rules-modal">
+        <div class="modal">
+            <h2>📖 游戏规则</h2>
+            <div class="rules-text" style="font-size: 0.9rem; color: #9a3412; line-height: 1.6; margin: 15px 0;">
+                <p><strong>目标：</strong>找到所有配对的卡片</p>
+                <p><strong>玩法：</strong></p>
+                <p>• 点击卡片翻开它</p>
+                <p>• 每次翻开两张卡片</p>
+                <p>• 相同则配对成功，保持翻开</p>
+                <p>• 不同则自动翻回</p>
+                <p style="margin-top: 10px;"><strong>提示：</strong>记住卡片位置，用最少的步数完成！</p>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-primary" onclick="closeRulesModal()">明白了</button>
             </div>
         </div>
     </div>
@@ -849,6 +888,14 @@
 
         function closeVictory() {
             document.getElementById('victory-modal').classList.remove('show');
+        }
+
+        function showRulesModal() {
+            document.getElementById('rules-modal').classList.add('show');
+        }
+
+        function closeRulesModal() {
+            document.getElementById('rules-modal').classList.remove('show');
         }
 
         function showToast(message, type = 'success') {
