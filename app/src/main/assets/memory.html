@@ -90,7 +90,7 @@
         }
 
         .nav-menu a {
-            padding: 10px 16px;
+            padding: 8px 12px;
             border-radius: 12px;
             text-decoration: none;
             color: #333;
@@ -146,14 +146,20 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 16px;
+            padding: 8px 12px;
             padding-top: max(12px, env(safe-area-inset-top));
-            padding-right: 60px;
+            
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(249, 115, 22, 0.2);
             box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-        }
+        
+        .header-right {
+                    display: flex;
+                    gap: 8px;
+                    align-items: center;
+                }
+}
 
         .logo {
             display: flex;
@@ -192,16 +198,17 @@
         }
 
         .how-to-play-btn {
-            padding: 6px 12px;
-            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-            border: none;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 700;
+            padding: 5px 10px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
             color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 0.7rem;
+            font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
             transition: all 0.2s ease;
+            box-shadow: 0 3px 10px rgba(245, 158, 11, 0.4);
+            white-space: nowrap;
         }
 
         .how-to-play-btn:active {
@@ -214,7 +221,7 @@
             display: flex;
             justify-content: center;
             gap: 20px;
-            padding: 10px 16px;
+            padding: 8px 12px;
         }
 
         .stat-card {
@@ -352,7 +359,7 @@
             display: flex;
             align-items: center;
             gap: 4px;
-            padding: 10px 16px;
+            padding: 8px 12px;
             font-size: 0.85rem;
             font-weight: 700;
             border: none;
@@ -432,7 +439,7 @@
         }
 
         .theme-option {
-            padding: 12px 16px;
+            padding: 8px 12px;
             background: rgba(255, 237, 213, 0.5);
             border: 2px solid transparent;
             border-radius: 12px;
@@ -590,7 +597,7 @@
             <div class="logo-icon">🃏</div>
             <div class="logo-text">记忆翻牌</div>
         </div>
-        <div style="display: flex; gap: 8px; align-items: center;">
+        <div class="header-right">
             <button class="how-to-play-btn" onclick="showRulesModal()">❓ 玩法</button>
             <div class="theme-badge" id="theme-badge">Emoji</div>
         </div>

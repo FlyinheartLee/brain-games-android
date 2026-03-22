@@ -91,14 +91,20 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 16px;
+            padding: 8px 12px;
             padding-top: max(12px, env(safe-area-inset-top));
-            padding-right: 60px;
+            
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(16, 185, 129, 0.2);
             box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-        }
+        
+        .header-right {
+                    display: flex;
+                    gap: 8px;
+                    align-items: center;
+                }
+}
 
         .logo {
             display: flex;
@@ -142,7 +148,7 @@
             display: flex;
             justify-content: center;
             gap: 24px;
-            padding: 10px 16px;
+            padding: 8px 12px;
         }
 
         .stat-item {
@@ -264,7 +270,7 @@
             display: flex;
             justify-content: center;
             gap: 10px;
-            padding: 12px 16px;
+            padding: 8px 12px;
             padding-bottom: max(12px, env(safe-area-inset-bottom));
             flex-wrap: wrap;
         }
@@ -304,7 +310,7 @@
             display: flex;
             justify-content: center;
             gap: 8px;
-            padding: 10px 16px;
+            padding: 8px 12px;
             background: rgba(255, 255, 255, 0.95);
             border-top: 2px solid rgba(16, 185, 129, 0.2);
         }
@@ -461,24 +467,21 @@
 
         /* 玩法介绍按钮 */
         .how-to-play-btn {
-            padding: 6px 12px;
+            padding: 5px 10px;
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
             color: white;
             border: none;
-            border-radius: 20px;
-            font-size: 0.75rem;
+            border-radius: 16px;
+            font-size: 0.7rem;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s ease;
-            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
-            display: flex;
-            align-items: center;
-            gap: 4px;
+            box-shadow: 0 3px 10px rgba(245, 158, 11, 0.4);
+            white-space: nowrap;
         }
 
         .how-to-play-btn:active {
             transform: scale(0.95);
-            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
         }
 
         .toast {
@@ -563,7 +566,7 @@
             display: flex;
         }
         .nav-menu a {
-            padding: 10px 16px;
+            padding: 8px 12px;
             border-radius: 12px;
             text-decoration: none;
             color: #333;
@@ -599,7 +602,7 @@
             <div class="logo-icon">🏢</div>
             <div class="logo-text">摩天楼</div>
         </div>
-        <div style="display: flex; gap: 8px; align-items: center;">
+        <div class="header-right">
             <button class="how-to-play-btn" onclick="showRules()">❓ 玩法</button>
             <div class="level-badge" id="level-badge">4×4</div>
         </div>
