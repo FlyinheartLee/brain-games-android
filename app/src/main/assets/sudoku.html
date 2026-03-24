@@ -472,15 +472,30 @@
         .tool-btn {
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 4px;
-            padding: 6px 10px;
-            font-size: 0.75rem;
+            padding: 6px 8px;
+            font-size: 0.7rem;
             font-weight: 600;
             border: none;
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             backdrop-filter: blur(10px);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .tool-btn-new {
+            flex-direction: column;
+            white-space: normal;
+            font-size: 0.65rem;
+            padding: 4px 6px;
+            min-width: 56px;
+        }
+
+        .tool-btn-new span {
+            font-size: 1rem;
         }
 
         .tool-btn:active {
@@ -990,7 +1005,8 @@
     <!-- 工具栏 -->
     <div class="toolbar">
         <button class="tool-btn tool-btn-new" onclick="autoFillNotes()">
-            <span>📋</span> 一键笔记
+            <span>📋</span>
+            <div>一键<br>笔记</div>
         </button>
         <button class="tool-btn tool-btn-secondary" id="notes-btn" onclick="toggleNotesMode()">
             <span>📝</span> 笔记
