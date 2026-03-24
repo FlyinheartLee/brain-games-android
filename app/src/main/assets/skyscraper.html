@@ -7,6 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#10b981">
     <title>摩天楼 -  visibility puzzle</title>
+    <script src="best-record.js"></script>
     <style>
         :root {
             --primary: #10b981;
@@ -170,6 +171,22 @@
             font-weight: 800;
             color: var(--text-primary);
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-value.best-record {
+            font-size: 1rem;
+            color: #fbbf24;
+            text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+        }
+
+        .stat-value.new-record {
+            animation: recordPulse 1s ease-in-out infinite;
+            color: #fbbf24;
+        }
+
+        @keyframes recordPulse {
+            0%, 100% { transform: scale(1); text-shadow: 0 0 10px rgba(251, 191, 36, 0.5); }
+            50% { transform: scale(1.1); text-shadow: 0 0 20px rgba(251, 191, 36, 0.8); }
         }
 
         .game-area {
@@ -620,6 +637,14 @@
             <span class="stat-label">难度</span>
             <span class="stat-value" id="difficulty-text">简单</span>
         </div>
+        <div class="stat-item">
+            <span class="stat-label">⏱️ 时间</span>
+            <span class="stat-value" id="time-display">0:00</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">🏆 最佳</span>
+            <span class="stat-value best-record" id="best-record">--</span>
+        </div>
     </div>
 
     <div class="game-area">
@@ -700,6 +725,10 @@
             <div class="victory-icon">🎉</div>
             <h2>恭喜通关！</h2>
             <p style="color: #047857; margin: 10px 0;">你完成了 <span id="victory-size">5×5</span> 摩天楼！</p>
+            <p style="color: #065f46; font-size: 1.2rem; font-weight: 700;">⏱️ 用时 <span id="victory-time">0:00</span></p>
+            <div id="new-record-badge" style="display: none; margin-top: 12px; padding: 8px 16px; background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); border-radius: 20px; color: white; font-weight: 700; font-size: 1rem; animation: bounce 1s ease infinite;">
+                🏆 新纪录！
+            </div>
             <div class="modal-actions" style="margin-top: 24px;">
                 <button class="modal-btn modal-btn-primary" onclick="nextLevel()">下一关</button>
             </div>
@@ -719,6 +748,10 @@
         let selectedCell = null;
         let selectedLevel = 5;
         let history = [];
+        let gameStartTime = null;
+        let timerInterval = null;
+        let currentGameTime = 0;
+        const GAME_ID = 'skyscraper';
 
         function init() {
             createGrid();
@@ -727,6 +760,8 @@
             renderHints();
             createNumberPad();
             updateStats();
+            startTimer();
+            updateBestRecordDisplay();
         }
 
         function createGrid() {
@@ -1063,9 +1098,43 @@
             for (let row of grid) {
                 filled += row.filter(n => n !== 0).length;
             }
-            
+
             document.getElementById('filled-count').textContent = filled;
             document.getElementById('remaining-count').textContent = gridSize * gridSize - filled;
+        }
+
+        function startTimer() {
+            gameStartTime = Date.now();
+            currentGameTime = 0;
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                currentGameTime = Date.now() - gameStartTime;
+                updateTimeDisplay();
+            }, 100);
+        }
+
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            return currentGameTime;
+        }
+
+        function updateTimeDisplay() {
+            const seconds = Math.floor(currentGameTime / 1000);
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            document.getElementById('time-display').textContent = mins > 0 ? `${mins}:${secs.toString().padStart(2, '0')}` : `${secs}秒`;
+        }
+
+        function updateBestRecordDisplay() {
+            const record = gameRecords.getRecord(`${GAME_ID}_${selectedLevel}`);
+            let displayText = '--';
+            if (record.bestTime) {
+                displayText = gameRecords.formatTime(record.bestTime);
+            }
+            document.getElementById('best-record').textContent = displayText;
         }
 
         function undo() {
@@ -1092,7 +1161,25 @@
         }
 
         function showVictory() {
+            const finalTime = stopTimer();
             document.getElementById('victory-size').textContent = `${gridSize}×${gridSize}`;
+            document.getElementById('victory-time').textContent = gameRecords.formatTime(finalTime);
+
+            // 记录成绩
+            const result = gameRecords.record(GAME_ID, { time: finalTime, difficulty: selectedLevel.toString() });
+
+            // 检查是否打破纪录
+            const hasNewRecord = result.timeRecord && result.timeRecord.isNewRecord;
+
+            const badge = document.getElementById('new-record-badge');
+            if (hasNewRecord) {
+                badge.style.display = 'inline-block';
+                showToast('🎉 打破时间纪录！', 'success');
+            } else {
+                badge.style.display = 'none';
+            }
+
+            updateBestRecordDisplay();
             document.getElementById('victory-modal').classList.add('show');
         }
 
@@ -1123,13 +1210,14 @@
 
         function startGame() {
             gridSize = selectedLevel;
-            
+
             const labels = { 4: '4×4', 5: '5×5', 6: '6×6' };
             const diffLabels = { 4: '简单', 5: '进阶', 6: '困难' };
             document.getElementById('level-badge').textContent = labels[gridSize];
             document.getElementById('difficulty-text').textContent = diffLabels[gridSize];
-            
+
             closeLevelModal();
+            stopTimer();
             init();
             showToast('🎮 新游戏开始！', 'success');
         }
