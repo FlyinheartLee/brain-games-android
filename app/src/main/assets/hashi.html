@@ -8,6 +8,7 @@
     <meta name="theme-color" content="#3b82f6">
     <meta name="description" content="精美数桥游戏 - 连接所有岛屿的智慧挑战">
     <title>数桥 Master</title>
+    <script src="best-record.js"></script>
     
     <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjogIuWvj+acnyBNYXN0ZXIiLCAic2hvcnRfbmFtZSI6ICLlr4/mlq8iLCAic3RhcnRfdXJsIjogIi4iLCAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwgImJhY2tncm91bmRfY29sb3IiOiAiIzNiODJmNiIsICJ0aGVtZV9jb2xvciI6ICIjM2I4MmY2In0=">
     
@@ -840,6 +841,10 @@
             <span class="stat-label">🌉</span>
             <span class="stat-value bridges" id="bridge-count">0</span>
         </div>
+        <div class="stat-card best-record" id="best-record-card" style="display: none;">
+            <span class="stat-label">🏆 最佳</span>
+            <span class="stat-value" id="best-record" style="font-size: 0.9rem;">--</span>
+        </div>
     </div>
 
     <!-- 提示文字 -->
@@ -950,6 +955,8 @@
         let history = [];
         let selectedDifficulty = 'medium';
         let rows, cols;
+        let gameStartTime = 0;
+        let gameEndTime = 0;
 
         // 初始化
         function init() {
@@ -961,6 +968,7 @@
         function newGame() {
             clearInterval(timerInterval);
             seconds = 0;
+            gameStartTime = Date.now();
             updateTimer();
             timerInterval = setInterval(updateTimer, 1000);
 
@@ -976,6 +984,21 @@
             renderGrid();
             updateBridgeCount();
             updateDifficultyBadge();
+            showBestRecord();
+        }
+
+        // 显示最佳记录
+        function showBestRecord() {
+            const record = gameRecords.getRecord('hashi_' + difficulty);
+            const recordCard = document.getElementById('best-record-card');
+            const recordEl = document.getElementById('best-record');
+
+            if (record.bestTime) {
+                recordCard.style.display = 'flex';
+                recordEl.textContent = gameRecords.formatTime(record.bestTime);
+            } else {
+                recordCard.style.display = 'none';
+            }
         }
 
         // 生成谜题
@@ -1462,6 +1485,21 @@
 
         // 胜利弹窗
         function showVictory() {
+            gameEndTime = Date.now();
+            const timeMs = gameEndTime - gameStartTime;
+
+            // 记录成绩
+            const result = gameRecords.record('hashi', {
+                time: timeMs,
+                difficulty: difficulty
+            });
+
+            // 显示庆祝提示
+            if (result.timeRecord && result.timeRecord.isNewRecord) {
+                showToast('🎉 恭喜通关！\n🏆 打破时间纪录！', 'success');
+                setTimeout(showBestRecord, 500);
+            }
+
             const mins = Math.floor((seconds - 1) / 60).toString().padStart(2, '0');
             const secs = ((seconds - 1) % 60).toString().padStart(2, '0');
             document.getElementById('victory-time').textContent = `${mins}:${secs}`;

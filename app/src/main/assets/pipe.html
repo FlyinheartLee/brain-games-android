@@ -7,6 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#06b6d4">
     <title>接水管 - Pipe Puzzle</title>
+    <script src="best-record.js"></script>
     <style>
         :root {
             --primary: #06b6d4;
@@ -666,6 +667,10 @@
             <span class="stat-label">点击</span>
             <span class="stat-value" id="click-count">0</span>
         </div>
+        <div class="stat-card best-record" id="best-record-card" style="display: none;">
+            <span class="stat-label">🏆 最佳</span>
+            <span class="stat-value" id="best-record" style="font-size: 0.9rem;">--</span>
+        </div>
     </div>
 
     <div class="game-area">
@@ -751,6 +756,8 @@
         let grid = [];
         let clickCount = 0;
         let gameWon = false;
+        let gameStartTime = 0;
+        let gameEndTime = 0;
 
         function init() {
             generateLevelOptions();
@@ -779,14 +786,40 @@
             const level = LEVELS[levelIdx];
             clickCount = 0;
             gameWon = false;
+            gameStartTime = Date.now();
             
             document.getElementById('level-badge').textContent = `第${levelIdx + 1}关`;
             document.getElementById('level-num').textContent = levelIdx + 1;
             document.getElementById('click-count').textContent = 0;
             
+            // 显示最佳记录
+            showBestRecord();
+            
             // 生成随机管道网格
             generateGrid(level.size, level.source, level.target);
             renderGrid();
+        }
+
+        // 显示最佳记录
+        function showBestRecord() {
+            const record = gameRecords.getRecord('pipe_default');
+            const recordCard = document.getElementById('best-record-card');
+            const recordEl = document.getElementById('best-record');
+            
+            if (record.bestTime || record.bestSteps) {
+                recordCard.style.display = 'flex';
+                let text = '';
+                if (record.bestTime) {
+                    text += gameRecords.formatTime(record.bestTime);
+                }
+                if (record.bestSteps) {
+                    if (text) text += ' / ';
+                    text += record.bestSteps + '步';
+                }
+                recordEl.textContent = text;
+            } else {
+                recordCard.style.display = 'none';
+            }
         }
 
         function generateGrid(size, source, target) {
@@ -1021,6 +1054,35 @@
         }
 
         function showVictory() {
+            gameEndTime = Date.now();
+            const timeMs = gameEndTime - gameStartTime;
+            
+            // 记录成绩
+            const result = gameRecords.record('pipe', {
+                time: timeMs,
+                steps: clickCount,
+                difficulty: 'default'
+            });
+            
+            // 显示庆祝提示
+            let celebrateMsg = '🎉 恭喜通关！';
+            let hasNewRecord = false;
+            
+            if (result.timeRecord && result.timeRecord.isNewRecord) {
+                celebrateMsg += '\n🏆 打破时间纪录！';
+                hasNewRecord = true;
+            }
+            if (result.stepsRecord && result.stepsRecord.isNewRecord) {
+                celebrateMsg += '\n🏆 打破步数纪录！';
+                hasNewRecord = true;
+            }
+            
+            if (hasNewRecord) {
+                showToast(celebrateMsg, 'success');
+                // 更新最佳记录显示
+                setTimeout(showBestRecord, 500);
+            }
+            
             document.getElementById('victory-modal').classList.add('show');
         }
 
