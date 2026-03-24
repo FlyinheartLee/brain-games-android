@@ -7,6 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#f97316">
     <title>记忆翻牌 - Memory Game</title>
+    <script src="best-record.js"></script>
     <style>
         :root {
             --primary: #f97316;
@@ -611,6 +612,14 @@
             <span class="stat-label">🔄 步数</span>
             <span class="stat-value" id="moves">0</span>
         </div>
+        <div class="stat-card">
+            <span class="stat-label">🏆 最佳时间</span>
+            <span class="stat-value" id="best-time">--:--</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">🏆 最佳步数</span>
+            <span class="stat-value" id="best-moves">--</span>
+        </div>
     </div>
 
     <div class="game-area">
@@ -704,6 +713,7 @@
 
         let currentTheme = 'emoji';
         let gridSize = { cols: 4, rows: 4 };
+        let currentDifficulty = 'easy';
         let cards = [];
         let flippedCards = [];
         let matchedPairs = 0;
@@ -714,6 +724,7 @@
 
         function init() {
             newGame();
+            updateBestRecordDisplay();
         }
 
         function newGame() {
@@ -870,8 +881,10 @@
         function selectGrid(grid) {
             if (grid === '4x4') {
                 gridSize = { cols: 4, rows: 4 };
+                currentDifficulty = 'easy';
             } else {
                 gridSize = { cols: 4, rows: 5 };
+                currentDifficulty = 'medium';
             }
             document.querySelectorAll('.grid-option').forEach(opt => {
                 opt.classList.toggle('selected', opt.dataset.grid === grid);
@@ -881,7 +894,29 @@
         function applySettings() {
             closeSettingsModal();
             newGame();
+            updateBestRecordDisplay();
             showToast('设置已应用', 'success');
+        }
+
+        function updateBestRecordDisplay() {
+            const record = gameRecords.getRecord('memory_' + currentDifficulty);
+            const bestTimeEl = document.getElementById('best-time');
+            const bestMovesEl = document.getElementById('best-moves');
+
+            if (record && record.bestTime) {
+                const totalSeconds = Math.floor(record.bestTime / 1000);
+                const mins = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+                const secs = (totalSeconds % 60).toString().padStart(2, '0');
+                bestTimeEl.textContent = `${mins}:${secs}`;
+            } else {
+                bestTimeEl.textContent = '--:--';
+            }
+
+            if (record && record.bestSteps) {
+                bestMovesEl.textContent = record.bestSteps;
+            } else {
+                bestMovesEl.textContent = '--';
+            }
         }
 
         function showVictory() {
@@ -889,6 +924,23 @@
             const secs = (seconds % 60).toString().padStart(2, '0');
             document.getElementById('victory-time').textContent = `${mins}:${secs}`;
             document.getElementById('victory-moves').textContent = moves;
+
+            // 记录最佳时间和步数
+            const result = gameRecords.record('memory', { time: seconds * 1000, steps: moves, difficulty: currentDifficulty });
+
+            // 显示庆祝提示
+            let recordMessage = '';
+            if (result.timeRecord && result.timeRecord.isNewRecord) {
+                recordMessage += '🎉 新纪录：最佳时间！';
+            }
+            if (result.stepsRecord && result.stepsRecord.isNewRecord) {
+                recordMessage += (recordMessage ? ' ' : '') + '🏆 新纪录：最少步数！';
+            }
+            if (recordMessage) {
+                showToast(recordMessage, 'success');
+            }
+
+            updateBestRecordDisplay();
             document.getElementById('victory-modal').classList.add('show');
         }
 

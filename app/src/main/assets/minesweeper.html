@@ -7,6 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#64748b">
     <title>扫雷 - Minesweeper</title>
+    <script src="best-record.js"></script>
     <style>
         :root {
             --primary: #64748b;
@@ -627,6 +628,10 @@
             <span class="stat-label">💣</span>
             <span class="stat-value mines" id="mine-count">10</span>
         </div>
+        <div class="stat-card">
+            <span class="stat-label">🏆最佳</span>
+            <span class="stat-value" id="best-time">---</span>
+        </div>
     </div>
 
     <div class="game-area">
@@ -737,6 +742,7 @@
 
         function init() {
             newGame();
+            updateBestRecordDisplay();
         }
 
         function newGame() {
@@ -977,11 +983,34 @@
             closeDefeat();
             document.getElementById('difficulty-badge').textContent = DIFFICULTIES[currentDiff].name;
             newGame();
+            updateBestRecordDisplay();
             showToast('🎮 新游戏开始！', 'success');
         }
 
+        function updateBestRecordDisplay() {
+            const record = gameRecords.getRecord('minesweeper_' + currentDiff);
+            const bestTimeEl = document.getElementById('best-time');
+            if (record && record.bestTime) {
+                const seconds = Math.floor(record.bestTime / 1000);
+                bestTimeEl.textContent = seconds.toString().padStart(3, '0');
+            } else {
+                bestTimeEl.textContent = '---';
+            }
+        }
+
         function showVictory() {
-            document.getElementById('victory-time').textContent = (seconds - 1).toString().padStart(3, '0');
+            const finalTime = seconds - 1;
+            document.getElementById('victory-time').textContent = finalTime.toString().padStart(3, '0');
+
+            // 记录最佳时间
+            const result = gameRecords.record('minesweeper', { time: finalTime * 1000, difficulty: currentDiff });
+
+            // 显示庆祝提示
+            if (result.timeRecord && result.timeRecord.isNewRecord) {
+                showToast('🎉 新纪录！最佳时间！', 'success');
+            }
+
+            updateBestRecordDisplay();
             document.getElementById('victory-modal').classList.add('show');
         }
 
